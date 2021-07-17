@@ -131,11 +131,10 @@ def send_request(url):
     q.add_header('Cookie', args.cookies)
 
     try:
-        sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+        sslcontext = ssl._create_unverified_context()
         response = urlopen(q, timeout=args.timeout, context=sslcontext)
-    except:
-        sslcontext = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
-        response = urlopen(q, timeout=args.timeout, context=sslcontext)
+    except Exception as err:
+        raise Exception(err)
 
     if response.info().get('Content-Encoding') == 'gzip':
         data = GzipFile(fileobj=readBytesCustom(response.read())).read()
@@ -333,8 +332,9 @@ if __name__ == "__main__":
         if not args.burp:
             try:
                 file = send_request(url)
-            except Exception as e:
-                parser_error("invalid input defined or SSL error: %s" % e)
+            except Exception as err:
+                errmsg = " ".join([url, str(err)])
+                parser_error(errmsg)
         else:
             file = url['js']
             url = url['url']
