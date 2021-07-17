@@ -74,8 +74,8 @@ def parser_error(errmsg):
     '''
     Error Messages
     '''
-    print("Usage: python %s [Options] use -h for help" % sys.argv[0])
-    print("Error: %s" % errmsg)
+    # print("Usage: python %s [Options] use -h for help" % sys.argv[0])
+    print("Error: {}".format(errmsg), file=sys.stderr)
     sys.exit()
 
 
@@ -233,11 +233,13 @@ def parser_file(content, regex_str, mode=1, more_regex=None, no_dup=1):
 
     return filtered_items
 
-def cli_output(endpoints):
+def cli_output(endpoints, url=None):
     '''
     Output to CLI
     '''
     for endpoint in endpoints:
+        if url:
+            print("[{}]".format(url), end=' ')
         print(html.escape(endpoint["link"]).encode(
             'ascii', 'ignore').decode('utf8'))
 
@@ -376,7 +378,7 @@ if __name__ == "__main__":
                     continue
 
         if args.output == 'cli':
-            cli_output(endpoints)
+            cli_output(endpoints, url)
         else:
             output += '''
                 <h1>File: <a href="%s" target="_blank" rel="nofollow noopener noreferrer">%s</a></h1>
