@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+#! /usr/bin/python3
 # Python 3
 # LinkFinder
 # By Gerben_Javado
+# Powered by storenth
 
 # Fix webbrowser bug for MacOS
 import os
