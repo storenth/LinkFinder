@@ -33,8 +33,8 @@ regex_str = r"""
 
   (
     ((?:[a-zA-Z]{1,10}://|//)           # Match a scheme [a-Z]*1-10 or //
-    [^"'/]{1,}\.                        # Match a domainname (any character + dot)
-    [a-zA-Z]{2,}[^"']{0,})              # The domainextension and/or path
+    [^\"'/]{1,}\.                        # Match a domainname (any character + dot)
+    [a-zA-Z]{2,}[^\"']{0,})              # The domainextension and/or path
 
     |
 
@@ -47,20 +47,20 @@ regex_str = r"""
     ([a-zA-Z0-9_\-/]{1,}/               # Relative endpoint with /
     [a-zA-Z0-9_\-/]{1,}                 # Resource name
     \.(?:[a-zA-Z]{1,4}|action)          # Rest + extension (length 1-4 or action)
-    (?:[\?|#][^"|']{0,}|))              # ? or # mark with parameters
+    (?:[\?|#][^\"|\']{0,}|))              # ? or # mark with parameters
 
     |
 
     ([a-zA-Z0-9_\-/]{1,}/               # REST API (no extension) with /
     [a-zA-Z0-9_\-/]{3,}                 # Proper REST endpoints usually have 3+ chars
-    (?:[\?|#][^"|']{0,}|))              # ? or # mark with parameters
+    (?:[\?|#][^\"|\']{0,}|))              # ? or # mark with parameters
 
     |
 
     ([a-zA-Z0-9_\-]{1,}                 # filename
     \.(?:php|asp|aspx|jsp|json|
          action|html|js|txt|xml)        # . + extension
-    (?:[\?|#][^"|']{0,}|))              # ? or # mark with parameters
+    (?:[\?|#][^\"|\']{0,}|))              # ? or # mark with parameters
 
   )
 
