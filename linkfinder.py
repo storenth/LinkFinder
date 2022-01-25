@@ -8,8 +8,24 @@
 import os
 os.environ["BROWSER"] = "open"
 
-# Import libraries
-import re, sys, glob, html, argparse, jsbeautifier, webbrowser, subprocess, base64, ssl, xml.etree.ElementTree
+import re
+import sys
+import glob
+import argparse
+import jsbeautifier
+import webbrowser
+import subprocess
+import base64
+import requests
+import string
+import random
+import html
+import urllib3
+import xml.etree.ElementTree
+
+# disable warning
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from gzip import GzipFile
 from string import Template
@@ -21,10 +37,6 @@ except ImportError:
     from io import BytesIO
     readBytesCustom = BytesIO
 
-try:
-    from urllib.request import Request, urlopen
-except ImportError:
-    from urllib2 import Request, urlopen
 
 # Regex used
 regex_str = r"""
@@ -120,30 +132,26 @@ def send_request(url):
     '''
     Send requests with Requests
     '''
-    q = Request(url)
 
-    q.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) \
-        AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36')
-    q.add_header('Accept', 'text/html,\
-        application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8')
-    q.add_header('Accept-Language', 'en-US,en;q=0.8')
-    q.add_header('Accept-Encoding', 'gzip')
-    q.add_header('Cookie', args.cookies)
+    # set headers and cookies
+    headers = {}
+    default_headers = {
+        'User-Agent'      : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',
+        'Accept'          : 'text/html, application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language' : 'en-US,en;q=0.8',
+        'Accept-Encoding' : 'gzip'
+    }
 
     try:
-        sslcontext = ssl._create_unverified_context()
-        response = urlopen(q, timeout=args.timeout, context=sslcontext)
+        resp = requests.get(
+            url = url,
+            verify = False,
+            headers = headers,
+        )
+        return resp.content.decode('utf-8','replace')
     except Exception as err:
-        raise Exception(err)
-
-    if response.info().get('Content-Encoding') == 'gzip':
-        data = GzipFile(fileobj=readBytesCustom(response.read())).read()
-    elif response.info().get('Content-Encoding') == 'deflate':
-        data = response.read().read()
-    else:
-        data = response.read()
-
-    return data.decode('utf-8', 'replace')
+        print(err)
+        sys.exit(0)
 
 def getContext(list_matches, content, include_delimiter=0, context_delimiter_str="\n"):
     '''
